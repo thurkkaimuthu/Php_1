@@ -135,6 +135,7 @@
     *   Uses **Vite**.
     *   Development: `npm run dev` (starts Vite dev server with HMR).
     *   Production: `npm run build` (compiles/bundles assets to `public/build`).
+    *   **Local Development Server:** Run `php artisan serve` to start the built-in PHP development server (usually accessible at `http://127.0.0.1:8000`). This is often used alongside `npm run dev` during local development.
 
 ## 3. Core Components
 
@@ -868,4 +869,5 @@
 *   **PDF Generation:** (`barryvdh/laravel-dompdf` `^3.1`) For exporting ISELP/PDP/Reports.
 *   **Excel/CSV Handling:** (`maatwebsite/excel` `^3.1`) For data imports/exports.
 *   **Word Document Generation:** (`phpoffice/phpword` `^1.3`) Potentially used for report/plan generation.
-*   **Configuration:** Primarily via `.env` variables referenced in `
+*   **Configuration:** Primarily via `.env` variables referenced in `config/services.php` and other config files.
+
