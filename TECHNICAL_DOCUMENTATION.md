@@ -330,121 +330,420 @@
 
     ```mermaid
     erDiagram
-    USERS ||--o{ STUDENTS : "mentors"
-    STUDENTS }|--|| SCHOOLS : "attends"
-    USERS ||--o{ MEETINGS : "creates/attends"
-    USERS ||--o{ TASKS : "assigns/completes"
-    USERS ||--o{ MENTOR_SURVEYS : "submits"
-    USERS ||--o{ TRAINING_ENROLLMENTS : "enrolls"
-    USERS ||--|| ROLES : "has"
-    STUDENTS ||--o{ MEETINGS : "subject of"
-    STUDENTS ||--o{ TASKS : "has"
-    STUDENTS ||--o{ GENERATED_ISELP : "has"
-    STUDENTS ||--o{ GENERATED_PDP : "has"
-    STUDENTS ||--o{ STUDENT_RECORDS : "has"
-    STUDENTS }|--o{ PARTNER_ORGANIZATIONS : "referred to"
-    MEETINGS ||--o{ MEETING_ATTENDANCES : "has"
-    MEETINGS }|--|| MEETING_CATEGORIES : "categorized as"
-    TRAININGS ||--o{ TRAINING_MODULES : "contains"
-    TRAINING_MODULES ||--o{ TRAINING_MODULE_COMPLETIONS : "completed by"
-    USERS }|--o{ COMMENTS : "writes"
-    USERS }|--o{ ATTACHMENTS : "uploads"
-    STUDENTS }|--o{ COMMENTS : "has"
-    STUDENTS }|--o{ ATTACHMENTS : "has"
+        USERS ||--o{ STUDENT_ATTENDANCE_RECORDS : "Recorded By"
+        USERS ||--o{ STUDENT_BEHAVIOR_RECORDS : "Recorded By"
+        USERS ||--o{ STUDENT_GRADE_RECORDS : "Recorded By"
+        USERS ||--o{ MENTOR_PROGRESS_REPORTS : "Subject Of"
+        USERS ||--o{ MENTOR_PLANS : "Has"
+        USERS ||--o{ MENTOR_SURVEYS : "Submits"
+        USERS ||--o{ MEETINGS : "Creates/Attends"
+        USERS ||--o{ MEETING_ATTENDANCES : "Attends"
+        USERS ||--o{ TASKS : "Assigns/AssignedTo"
+        USERS ||--o{ GOAL_ASSIGNMENTS : "Assigns/AssignedTo"
+        USERS ||--o{ TICKETS : "Creates"
+        USERS ||--o{ TICKET_RESPONSES : "Responds To"
+        USERS ||--o{ TRAINING_ENROLLMENTS : "Enrolled In"
+        USERS ||--o{ TRAINING_MODULE_COMPLETIONS : "Completes"
+        USERS ||--o{ RECOMMENDATIONS : "Receives"
+        USERS ||--o{ MENTOR_NOTIFICATION_PREFERENCES : "Has"
+        USERS ||--o{ activity_log : "Caused By"
+        USERS }|..|| ROLES : "Has (via model_has_roles)"
+        USERS }o..o{ MEDIA : "Has (Polymorphic)"
+        USERS }o..o{ STUDENTS : "Mentors (via mentor_student)"
+        USERS }o..o{ COMMENTS : "Writes (Polymorphic)"
+        USERS }o..o{ ATTACHMENTS : "Uploads (Polymorphic)"
 
-    USERS {
-        bigint id PK
-        varchar name
-        varchar email
-    }
-    
-    STUDENTS {
-        bigint id PK
-        varchar name
-        bigint school_id FK
-    }
-    
-    SCHOOLS {
-        bigint id PK
-        varchar name
-    }
-    
-    MEETINGS {
-        bigint id PK
-        datetime start_time
-        datetime end_time
-    }
-    
-    TASKS {
-        bigint id PK
-    }
-    
-    MENTOR_SURVEYS {
-        bigint id PK
-    }
-    
-    TRAINING_ENROLLMENTS {
-        bigint id PK
-    }
-    
-    ROLES {
-        bigint id PK
-        varchar name
-    }
-    
-    GENERATED_ISELP {
-        bigint id PK
-        text content
-    }
-    
-    GENERATED_PDP {
-        bigint id PK
-        text content
-    }
-    
-    STUDENT_RECORDS {
-        bigint id PK
-        varchar type "Attendance/Behavior/Grade"
-        date record_date
-    }
-    
-    PARTNER_ORGANIZATIONS {
-        bigint id PK
-        varchar name
-    }
-    
-    MEETING_ATTENDANCES {
-        bigint id PK
-    }
-    
-    MEETING_CATEGORIES {
-        bigint id PK
-    }
-    
-    TRAININGS {
-        bigint id PK
-        varchar title
-    }
-    
-    TRAINING_MODULES {
-        bigint id PK
-    }
-    
-    TRAINING_MODULE_COMPLETIONS {
-        bigint id PK
-    }
-    
-    COMMENTS {
-        bigint id PK
-    }
-    
-    ATTACHMENTS {
-        bigint id PK
-    }
+        STUDENTS ||--o{ MEETINGS : "Subject Of"
+        STUDENTS ||--o{ TASKS : "Related To"
+        STUDENTS ||--o{ GENERATED_ISELP : "Has"
+        STUDENTS ||--o{ GENERATED_PDP : "Has"
+        STUDENTS ||--o{ MENTOR_SURVEYS : "Subject Of"
+        STUDENTS ||--o{ STUDENT_ATTENDANCE_RECORDS : "Subject Of"
+        STUDENTS ||--o{ STUDENT_BEHAVIOR_RECORDS : "Subject Of"
+        STUDENTS ||--o{ STUDENT_GRADE_RECORDS : "Subject Of"
+        STUDENTS ||--o{ BAG_HISTORY : "Has"
+        STUDENTS ||--o{ GOAL_ASSIGNMENTS : "Subject Of"
+        STUDENTS ||--o{ COURSE_OF_ACTIONS : "Has"
+        STUDENTS ||--o{ STUDENT_FILES : "Has"
+        STUDENTS ||--o{ RECOMMENDATIONS : "Subject Of"
+        STUDENTS ||--o{ PROGRESS_NOTES : "Has"
+        STUDENTS }o..o{ PARTNER_ORGANIZATIONS : "Referred To (via StudentPartnerOrganization)"
+        STUDENTS }o..o{ MEDIA : "Has (Polymorphic)"
+        STUDENTS }o..o{ COMMENTS : "Subject Of (Polymorphic)"
+        STUDENTS }o..o{ ATTACHMENTS : "Related To (Polymorphic)"
+        STUDENTS ||--|{ SCHOOLS : "Belongs To"
+
+        MEETINGS ||--o{ MEETING_ATTENDANCES : "Has Attendances"
+        MEETINGS ||--o{ MEETING_REMINDERS : "Has Reminders"
+        MEETINGS ||--|{ MEETING_CATEGORIES : "Has Category"
+        MEETINGS ||--|{ MEETING_OUTCOMES : "Has Outcome"
+        MEETINGS }o..o{ MEDIA : "Has (Polymorphic)"
+        MEETINGS }o..o{ COMMENTS : "Has (Polymorphic)"
+        MEETINGS }o..o{ ATTACHMENTS : "Has (Polymorphic)"
+
+        TASKS }o..o{ COMMENTS : "Has (Polymorphic)"
+        TASKS }o..o{ ATTACHMENTS : "Has (Polymorphic)"
+
+        GENERATED_ISELP {
+            bigint id PK
+            bigint student_id FK
+            bigint iselp_template_id FK "NULL"
+            text generated_content
+            varchar status
+        }
+        GENERATED_ISELP ||--|| ISELP_TEMPLATES : "Based On"
+
+        ISELP_TEMPLATES {
+            bigint id PK
+            varchar name
+            text structure
+        }
+        ISELP_TEMPLATES ||--o{ ISELP_CONTENT_FILES : "Uses"
+
+        ISELP_CONTENT_FILES {
+            bigint id PK
+            bigint iselp_template_id FK "NULL"
+            varchar file_path
+            varchar file_name
+        }
+
+        GENERATED_PDP {
+            bigint id PK
+            bigint student_id FK
+            bigint pdp_template_id FK "NULL"
+            text generated_content
+        }
+        GENERATED_PDP ||--|| PDP_TEMPLATES : "Based On"
+
+        PDP_TEMPLATES {
+            bigint id PK
+            varchar name
+            text structure
+        }
+
+        MENTOR_SURVEYS {
+            bigint id PK
+            bigint user_id FK
+            bigint student_id FK
+            text observations
+            json ai_analysis "NULL"
+        }
+
+        TRAININGS {
+            bigint id PK
+            varchar title
+            text description
+            bigint curriculum_id FK "NULL"
+        }
+        TRAININGS ||--o{ TRAINING_MODULES : "Has Modules"
+        TRAININGS ||--|{ CURRICULUM : "Belongs To"
+
+        TRAINING_MODULES {
+            bigint id PK
+            bigint training_id FK
+            varchar title
+            text content
+            int order
+        }
+
+        TRAINING_ENROLLMENTS {
+            bigint id PK
+            bigint user_id FK
+            bigint training_id FK
+            date enrolled_at
+            varchar status
+            date completed_at "NULL"
+        }
+        USERS ||--o{ TRAINING_ENROLLMENTS : "Has Enrollments"
+        TRAININGS ||--o{ TRAINING_ENROLLMENTS : "Has Enrollments"
+
+        TRAINING_MODULE_COMPLETIONS {
+            bigint id PK
+            bigint user_id FK
+            bigint training_module_id FK
+            timestamp completed_at
+        }
+        USERS ||--o{ TRAINING_MODULE_COMPLETIONS : "Module Completions"
+        TRAINING_MODULES ||--o{ TRAINING_MODULE_COMPLETIONS : "Module Completions"
+
+        PARTNER_ORGANIZATIONS {
+            bigint id PK
+            varchar name
+            text contact_info
+            text areas_of_expertise
+        }
+
+        STUDENT_PARTNER_ORGANIZATION {
+             bigint student_id FK
+             bigint partner_organization_id FK
+             date referral_date
+             "PK(student_id, partner_organization_id)"
+        }
+
+        GOALS {
+            bigint id PK
+            varchar title
+            text description
+            varchar type "Comment: e.g., Student, Mentor"
+        }
+
+        GOAL_ASSIGNMENTS {
+            bigint id PK
+            bigint goal_id FK
+            bigint assignable_id "Comment: Polymorphic ID"
+            varchar assignable_type "Comment: Polymorphic Type"
+            date due_date "NULL"
+            varchar status
+        }
+        GOALS ||--o{ GOAL_ASSIGNMENTS : "Assignments"
+
+        COURSE_OF_ACTIONS {
+             bigint id PK
+             bigint student_id FK
+             text plan_details
+             date start_date
+             date end_date "NULL"
+        }
+
+        TICKETS {
+            bigint id PK
+            bigint user_id FK "Comment: Creator"
+            varchar subject
+            text description
+            varchar status
+            varchar priority "NULL"
+        }
+        TICKETS ||--o{ TICKET_RESPONSES : "Has Responses"
+
+        TICKET_RESPONSES {
+            bigint id PK
+            bigint ticket_id FK
+            bigint user_id FK "Comment: Responder"
+            text response
+        }
+
+        WORKFLOWS {
+            bigint id PK
+            varchar name
+            varchar applicable_model "Comment: e.g., Ticket, Task"
+        }
+        WORKFLOWS ||--o{ WORKFLOW_STAGES : "Has Stages"
+
+        WORKFLOW_STAGES {
+            bigint id PK
+            bigint workflow_id FK
+            varchar name
+            int order
+        }
+        WORKFLOW_STAGES ||--o{ WORKFLOW_TRANSITIONS : "Originates From"
+        WORKFLOW_STAGES ||--o{ WORKFLOW_TRANSITIONS : "Leads To"
+
+        WORKFLOW_TRANSITIONS {
+             bigint id PK
+             bigint workflow_id FK
+             bigint from_stage_id FK
+             bigint to_stage_id FK
+             varchar action_name
+        }
+
+        RECOMMENDATIONS {
+            bigint id PK
+            varchar recommendable_type "Comment: Polymorphic Type"
+            bigint recommendable_id "Comment: Polymorphic ID"
+            varchar type "Comment: e.g., Training, Resource"
+            text content
+            varchar source "Comment: e.g., AI, Admin"
+        }
+
+        COMMENTS {
+            bigint id PK
+            bigint user_id FK
+            varchar commentable_type "Comment: Polymorphic Type"
+            bigint commentable_id "Comment: Polymorphic ID"
+            text body
+        }
+
+        ATTACHMENTS {
+            bigint id PK
+            bigint user_id FK
+            varchar attachable_type "Comment: Polymorphic Type"
+            bigint attachable_id "Comment: Polymorphic ID"
+            varchar file_path
+            varchar original_name
+        }
+
+        PROGRESS_NOTES {
+             bigint id PK
+             bigint student_id FK
+             bigint user_id FK "Comment: Author"
+             date note_date
+             text content
+        }
+
+        STUDENT_FILES {
+             bigint id PK
+             bigint student_id FK
+             bigint user_id FK "Comment: Uploader"
+             varchar file_path
+             varchar description "NULL"
+        }
+
+        STUDENT_ATTENDANCE_RECORDS {
+             bigint id PK
+             bigint student_id FK
+             date date
+             varchar status "Comment: e.g., Present, Absent"
+             bigint recorded_by_user_id FK "NULL"
+        }
+
+        STUDENT_BEHAVIOR_RECORDS {
+            bigint id PK
+            bigint student_id FK
+            date date
+            text incident_description
+            text action_taken "NULL"
+            bigint recorded_by_user_id FK "NULL"
+        }
+
+        STUDENT_GRADE_RECORDS {
+            bigint id PK
+            bigint student_id FK
+            varchar subject
+            varchar grade "Comment: e.g., A, 85%"
+            date term_date
+            bigint recorded_by_user_id FK "NULL"
+        }
+
+        BAG_HISTORY {
+             bigint id PK
+             bigint student_id FK
+             date record_date
+             int behavior_score "NULL"
+             int attendance_score "NULL"
+             int grade_score "NULL"
+             varchar overall_tier "NULL"
+        }
+
+        MEETING_ATTENDANCES {
+            bigint id PK
+            bigint meeting_id FK
+            bigint user_id FK
+            boolean attended
+        }
+
+        MEETING_CATEGORIES {
+            bigint id PK
+            varchar name
+        }
+
+        MEETING_OUTCOMES {
+             bigint id PK
+             bigint meeting_id FK
+             text outcome_notes
+             varchar status
+        }
+
+        MEETING_REMINDERS {
+            bigint id PK
+            bigint meeting_id FK
+            datetime reminder_time
+            varchar status "Comment: e.g., scheduled, sent"
+        }
+
+        MENTOR_NOTIFICATION_PREFERENCES {
+             bigint id PK
+             bigint user_id FK
+             boolean weekly_summary_email "DEFAULT true"
+             boolean weekly_summary_sms "DEFAULT false"
+             boolean meeting_reminder_email "DEFAULT true"
+        }
+
+        MENTOR_PLANS {
+            bigint id PK
+            bigint user_id FK
+            text plan_details
+            date review_date "NULL"
+        }
+
+        MENTOR_PROGRESS_REPORTS {
+            bigint id PK
+            bigint user_id FK
+            date report_date
+            text ai_analysis
+            text recommendations
+        }
+
+        NOTIFICATION_LOGS {
+            bigint id PK
+            varchar channel "Comment: e.g., email, sms"
+            varchar recipient
+            text message
+            timestamp sent_at "NULL"
+        }
+
+        SCHEDULED_EMAIL_TASKS {
+            bigint id PK
+            varchar recipient_email
+            varchar subject
+            text body
+            timestamp scheduled_time
+            boolean sent "DEFAULT false"
+        }
+
+        SETTINGS {
+            bigint id PK
+            varchar key
+            text value "NULL"
+        }
+
+        SCHOOLS {
+            bigint id PK
+            varchar name
+            text address "NULL"
+        }
+
+        CURRICULUM {
+             bigint id PK
+             varchar name
+             text description "NULL"
+        }
+
+        ROLES { 
+             bigint id PK
+             varchar name 
+        }
+        PERMISSIONS { 
+            bigint id PK 
+            varchar name 
+            }
+        model_has_roles { 
+            bigint role_id FK
+            varchar model_type
+            bigint model_id
+            "PK(role_id, model_id, model_type)" 
+            }
+        role_has_permissions { 
+            bigint permission_id FK 
+            bigint role_id FK 
+            "PK(permission_id, role_id)" 
+            }
+        activity_log { bigint id PK }
+        media { bigint id PK }
+        jobs { bigint id PK }
+        failed_jobs { bigint id PK }
+        password_reset_tokens { 
+            varchar email PK 
+            }
+        sessions { 
+            varchar id PK 
+            }
+        notifications { 
+            uuid id PK 
+            }
 
     ```
 
-*   **Table Descriptions:** 
+*   **Table Descriptions:**
     *   `users`: Jetstream user table (name, email, password, etc.). Also includes Mentors, Admins, etc., distinguished by roles.
     *   `students`: Core student data.
     *   `schools`: School information, linked to students.
@@ -569,5 +868,4 @@
 *   **PDF Generation:** (`barryvdh/laravel-dompdf` `^3.1`) For exporting ISELP/PDP/Reports.
 *   **Excel/CSV Handling:** (`maatwebsite/excel` `^3.1`) For data imports/exports.
 *   **Word Document Generation:** (`phpoffice/phpword` `^1.3`) Potentially used for report/plan generation.
-*   **Configuration:** Primarily via `.env` variables referenced in `config/services.php` and other config files.
-
+*   **Configuration:** Primarily via `.env` variables referenced in `
